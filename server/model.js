@@ -18,6 +18,7 @@ const models = {
         'title':{type:String},
         'company':{type:String},
         'money':{type:String},
+        'desc':{type:String}
     },
     chat: {
 
