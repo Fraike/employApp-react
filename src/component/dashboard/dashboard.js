@@ -7,12 +7,21 @@ import Boss from '../../component/boss/boss'
 import Genius from '../../component/genius/genius'
 import Msg from '../../component/msg/msg'
 import User from '../../component/user/user'
+import {getMsgList,recvMsg} from '../../redux/chat.redux'
 
 @connect(
-    state=>state
+    state=>state,
+    {getMsgList,recvMsg}
 )
 
 class DashBoard extends React.Component{
+    componentDidMount(){
+        if(!this.props.chat.chatmsg.length){
+            this.props.getMsgList()
+            this.props.recvMsg()
+        }
+    }
+
     render(){
         const {pathname} = this.props.location
         const user = this.props.user
