@@ -1,5 +1,11 @@
 import React from 'react'
-import { InputItem , List, NavBar,Icon } from 'antd-mobile'
+import {
+    InputItem,
+    List,
+    NavBar,
+    Icon,
+    Grid
+} from 'antd-mobile'
 
 import {connect} from 'react-redux'
 import {sendMsg,getMsgList,recvMsg} from '../../redux/chat.redux'
@@ -21,6 +27,7 @@ class Chat extends React.Component{
             this.props.getMsgList()
             this.props.recvMsg()
         }
+        
     }
     handleSubmit(){
         // socket.emit('sendmsg',{text:this.state.text})
@@ -30,12 +37,16 @@ class Chat extends React.Component{
         const to = this.props.match.params.user
         const msg = this.state.text
         this.props.sendMsg({from,to,msg})
-        this.setState({text:''})
+        this.setState({text:'',showEmoji:false})
+    }
+    fixcar(){
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'))
+        }, 0);
     }
     render(){
         const emoji = '😀 😀 😁 😂 🤣 😃 😄 😅 😆 😉 😊 😋 😎 😍 😘  😗 😙 😚 🙂 🤗 🤩 🤔 🤨 😐 😑 😶 🙄 😏 😣 😥 😮 🤐 😯 😪 😫 😴 😌 😛 😜 😝 🤤 😒 😓 😔 😕 🙃 🤑 😲 ☹️ 🙁 😖 😞 😟 😤 😢 😭 😦 😧 😨 😩 🤯 😬 😰 😱 😳 🤪 😵 😡 😠 🤬 😷 🤒 🤕 🤢 🤮 🤧 😇 🤠 🤡 🤥 🤫 🤭 🧐 🤓 😈 👿 👹 👺 💀 👻 👽 🤖 💩 😺 😸 😹 😻 😼 😽 🙀 😿 😾'
-                        .split(' ').filter(v=>v).map(v=>v.text)
-
+                        .split(' ').filter(v=>v).map(v=>({text:v}))
         const userid = this.props.match.params.user
         const Item = List.Item
         const users = this.props.chat.users
@@ -66,19 +77,43 @@ class Chat extends React.Component{
                    </List>
                    )
                 })}
-
                 <div className="stick-footer">
-                <List>
-                    <InputItem
-                        placeholder="请输入"
-                        value={this.state.text}
-                        onChange={v=>{this.setState({text:v})}}
-                        extra = {<span onClick={()=>this.handleSubmit()}>发送</span>}
-                    >
-                    
-                    </InputItem>
+                    <List>
+                        <InputItem
+                            placeholder="请输入"
+                            value={this.state.text}
+                            onChange={v=>{this.setState({text:v})}}
+                            extra = {
+                                <div>
+                                    <span 
+                                    style={{marginRight:15}} 
+                                    onClick={
+                                        ()=>{
+                                            this.setState({showEmoji:!this.state.showEmoji})
+                                            this.fixcar()
+                                        }
+                                    }
 
-                </List>
+                                    >😀</span>
+                                    <span onClick={()=>this.handleSubmit()}>发送</span>
+                                </div>
+                            }
+                        >
+                        </InputItem>
+                    </List>
+                    {
+                        this.state.showEmoji && <Grid 
+                        data={emoji}
+                        columnNum={9}
+                        carouselMaxRow={4}
+                        isCarousel={true}
+                        onClick={el=>{
+                            this.setState({
+                                text: this.state.text + el.text
+                            })
+                        }}
+                        ></Grid>
+                    }
                 </div>
             </div>
         )

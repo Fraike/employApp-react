@@ -38,7 +38,7 @@ function msgRecv(msg,userid){
 export function recvMsg(){
     return (dispatch,getState)=>{
         socket.on('recvmsg',function(data){
-            console.log('recvmsg',data)
+            // console.log('recvmsg',data)
             const userid = getState().user._id
             dispatch(msgRecv(data,userid))
         })
@@ -56,7 +56,7 @@ export function getMsgList(){
     return (dispatch,getState)=>{
         axios.get('/user/getmsglist').then(res=>{
             if(res.status === 200 && res.data.code === 0){
-                console.log('getstate',getState())
+                // console.log('getstate',getState())
                 const userid = getState().user._id
                 dispatch(msgList(res.data.msgs,res.data.users,userid))
             }
