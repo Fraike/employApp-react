@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import {connect} from 'react-redux'
 import { List, Badge } from 'antd-mobile';
 
@@ -12,7 +11,6 @@ class Msg extends React.Component{
         return arr[arr.length-1]
     }
     render(){
-        // console.log(this.props)
         if (!this.props.chat.chatmsg){
             return null
         }
@@ -22,17 +20,22 @@ class Msg extends React.Component{
             msgGroup[v.chatid].push(v)
         })
        
-        const chatList = Object.values(msgGroup)
-         console.log(chatList);
+        const chatList = Object.values(msgGroup).sort((a,b)=>{
+            const a_last = this.getLastItem(a).create_time
+            const b_last = this.getLastItem(b).create_time
+            return b_last - a_last
+
+
+        })
+        //  console.log(chatList);
         const Item = List.Item
         const Brief = List.Item.Brief
         const userid = this.props.user._id
         return (
             <div>
-                <List>
+                
                     {
                         chatList.map(v=>{
-                            // console.log(v)
                             const lastItem = this.getLastItem(v)
                             const targetId = v[0].from === userid ? v[0].to:v[0].from
                             const unreadNum = v.filter(v=>!v.read&&v.to===userid).length
@@ -40,18 +43,23 @@ class Msg extends React.Component{
                             const avatar = this.props.chat.users[targetId] ? this.props.chat.users[targetId].avatar : ''
                             
                             return (
-                                <Item
-                                    key={lastItem._id}
-                                    extra={<Badge text={unreadNum}></Badge>}
-                                    thumb={require(`../img/${avatar}.png`)}
-                                >
-                                {lastItem.content}
-                                <Brief>{name}</Brief>
-                            </Item>
+                            <List key={lastItem._id}>
+                                    <Item
+                                        arrow="horizontal"
+                                        extra={<Badge text={unreadNum}></Badge>}
+                                        thumb={require(`../img/${avatar}.png`)}
+                                        onClick={()=>{
+                                            this.props.history.push(`/chat/${targetId}`)
+                                        }}
+                                    >
+                                    {lastItem.content}
+                                    <Brief>{name}</Brief>
+                                </Item>
+                            </List>
                             )
                         })
                     }
-                </List>
+                
             </div>
         )
     }
