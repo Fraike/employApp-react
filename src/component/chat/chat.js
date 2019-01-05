@@ -10,6 +10,8 @@ import {
 import {connect} from 'react-redux'
 import {sendMsg,getMsgList,recvMsg,readMsg} from '../../redux/chat.redux'
 import { getChatId } from '../../redux/util';
+import QueueAnim from 'rc-queue-anim'
+
 // import io from 'socket.io-client'
 // const socket = io('ws://localhost:9093')
 
@@ -61,6 +63,7 @@ class Chat extends React.Component{
         return (
             <div id='chat-page' style={{marginTop:45}}>
                 <NavBar onLeftClick={()=>{this.props.history.goBack()}}  icon={<Icon type="left" />} mode='dark'>{users[userid].name}</NavBar>
+                <QueueAnim delay={100}>
                 {chatmsg.map(v=>{
                     const avatar = require(`../img/${users[v.from].avatar}.png`)
                    return v.from===userid?(
@@ -80,6 +83,7 @@ class Chat extends React.Component{
                    </List>
                    )
                 })}
+                </QueueAnim>
                 <div className="stick-footer">
                     <List>
                         <InputItem
